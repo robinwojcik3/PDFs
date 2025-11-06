@@ -129,6 +129,37 @@ def check_npm_installed() -> bool:
     log_error("npm n'est pas installé ou n'est pas dans le PATH")
     return False
 
+def check_dependencies_installed(pip_exe: str, requirements_file: Path) -> bool:
+    """Vérifie si toutes les dépendances sont déjà installées."""
+    try:
+        # Lire le fichier requirements
+        with open(requirements_file, 'r') as f:
+            requirements = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+
+        # Vérifier chaque package
+        result = subprocess.run(
+            [str(pip_exe), 'freeze'],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+
+        if result.returncode != 0:
+            return False
+
+        installed = result.stdout.lower()
+
+        # Vérifier que chaque package requis est installé
+        for req in requirements:
+            # Extraire le nom du package (avant ==, >=, etc.)
+            package_name = req.split('[')[0].split('==')[0].split('>=')[0].split('<=')[0].lower()
+            if package_name and package_name not in installed:
+                return False
+
+        return True
+    except Exception:
+        return False
+
 def setup_backend_venv() -> Tuple[bool, Optional[str]]:
     """Configure l'environnement virtuel Python pour le backend."""
     backend_dir = Path(__file__).parent / 'backend'
@@ -162,18 +193,22 @@ def setup_backend_venv() -> Tuple[bool, Optional[str]]:
         log_error(f"Python venv non trouvé : {python_exe}")
         return False, None
 
-    # Installer les dépendances
+    # Installer les dépendances seulement si nécessaire
     requirements_file = backend_dir / 'requirements.txt'
     if requirements_file.exists():
-        log_info("Installation des dépendances Python...")
-        try:
-            subprocess.run([str(pip_exe), 'install', '-q', '-r', str(requirements_file)],
-                         check=True,
-                         timeout=300)
-            log_success("Dépendances Python installées")
-        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
-            log_warning(f"Avertissement lors de l'installation des dépendances : {e}")
-            log_info("Tentative de continuer malgré tout...")
+        # Vérifier si les dépendances sont déjà installées
+        if check_dependencies_installed(pip_exe, requirements_file):
+            log_success("Dépendances Python déjà installées")
+        else:
+            log_info("Installation des dépendances Python...")
+            try:
+                subprocess.run([str(pip_exe), 'install', '-q', '-r', str(requirements_file)],
+                             check=True,
+                             timeout=300)
+                log_success("Dépendances Python installées")
+            except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+                log_warning(f"Avertissement lors de l'installation des dépendances : {e}")
+                log_info("Tentative de continuer malgré tout...")
 
     return True, str(python_exe)
 
@@ -181,6 +216,8 @@ def setup_frontend_deps() -> bool:
     """Installe les dépendances Node.js pour le frontend."""
     frontend_dir = Path(__file__).parent / 'frontend'
     node_modules = frontend_dir / 'node_modules'
+    package_json = frontend_dir / 'package.json'
+    package_lock = frontend_dir / 'package-lock.json'
 
     if not frontend_dir.exists():
         log_error(f"Le dossier frontend n'existe pas : {frontend_dir}")
@@ -199,7 +236,25 @@ def setup_frontend_deps() -> bool:
             log_error(f"Échec de l'installation des dépendances npm : {e}")
             return False
     else:
-        log_success("Dépendances Node.js déjà installées")
+        # Vérifier si package.json a été modifié depuis la dernière installation
+        if package_json.exists() and package_lock.exists():
+            package_json_time = package_json.stat().st_mtime
+            node_modules_time = node_modules.stat().st_mtime
+
+            if package_json_time > node_modules_time:
+                log_info("package.json modifié, mise à jour des dépendances...")
+                try:
+                    subprocess.run(['npm', 'install'],
+                                 cwd=str(frontend_dir),
+                                 check=True,
+                                 timeout=300)
+                    log_success("Dépendances Node.js mises à jour")
+                except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+                    log_warning(f"Échec de la mise à jour : {e}")
+            else:
+                log_success("Dépendances Node.js déjà à jour")
+        else:
+            log_success("Dépendances Node.js déjà installées")
 
     return True
 
@@ -228,8 +283,8 @@ def start_backend(python_exe: str, port: int) -> Optional[subprocess.Popen]:
             text=True
         )
 
-        # Attendre un peu pour vérifier que le processus démarre
-        time.sleep(2)
+        # Attendre un peu pour vérifier que le processus démarre (réduit à 1s)
+        time.sleep(1)
 
         if process.poll() is None:
             log_success(f"Backend démarré sur http://localhost:{port}")
@@ -270,8 +325,8 @@ def start_frontend(port: int, backend_port: int) -> Optional[subprocess.Popen]:
             env=env
         )
 
-        # Attendre un peu pour vérifier que le processus démarre
-        time.sleep(3)
+        # Attendre un peu pour vérifier que le processus démarre (réduit à 1.5s)
+        time.sleep(1.5)
 
         if process.poll() is None:
             log_success(f"Frontend démarré sur http://localhost:{port}")
@@ -376,7 +431,7 @@ def main():
 
         # Attendre que le backend soit prêt
         log_info("Attente du démarrage du backend...")
-        if wait_for_service(backend_port, max_wait=20):
+        if wait_for_service(backend_port, max_wait=15):
             log_success("Backend prêt !")
         else:
             log_warning("Le backend met du temps à démarrer, mais continuons...")
@@ -417,7 +472,7 @@ def main():
 
         # Attendre que le frontend soit prêt
         log_info("Attente du démarrage du frontend...")
-        if wait_for_service(frontend_port, max_wait=30):
+        if wait_for_service(frontend_port, max_wait=20):
             log_success("Frontend prêt !")
         else:
             log_warning("Le frontend met du temps à démarrer...")
