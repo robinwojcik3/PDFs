@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 
-from app.api import documents, search, annotations, interactive, advanced, organization
+from app.api import documents, search, annotations, interactive, advanced, organization, learning
 
 app = FastAPI(
     title="PDF Explorer - Indexation Interactive de PDFs Scientifiques",
@@ -40,6 +40,7 @@ app.include_router(annotations.router, prefix="/api/annotations", tags=["Annotat
 app.include_router(interactive.router, prefix="/api/interactive", tags=["Modules Interactifs"])
 app.include_router(advanced.router, prefix="/api/advanced", tags=["Analyse Avancée"])
 app.include_router(organization.router, prefix="/api/organization", tags=["Organisation"])
+app.include_router(learning.router, prefix="/api/learning", tags=["Applications Pédagogiques Interactives"])
 
 @app.get("/")
 async def root():
@@ -56,7 +57,8 @@ async def root():
             "Collections et favoris",
             "Historique de lecture",
             "Recommandations intelligentes",
-            "Export multi-formats"
+            "Export multi-formats",
+            "Applications pédagogiques interactives basées sur les concepts"
         ]
     }
 

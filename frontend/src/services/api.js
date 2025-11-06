@@ -141,6 +141,24 @@ export const organizationAPI = {
   getStatistics: () => api.get('/organization/statistics'),
 };
 
+// Applications pédagogiques interactives
+export const learningAPI = {
+  getAllInteractions: (documentId, includeMethodology = true) =>
+    api.get(`/learning/${documentId}/interactions`, { params: { include_methodology: includeMethodology } }),
+  getVisualizations: (documentId) => api.get(`/learning/${documentId}/interactions/visualizations`),
+  getSimulations: (documentId) => api.get(`/learning/${documentId}/interactions/simulations`),
+  getDiagrams: (documentId) => api.get(`/learning/${documentId}/interactions/diagrams`),
+  getExercises: (documentId, difficulty = null) =>
+    api.get(`/learning/${documentId}/interactions/exercises`, { params: difficulty ? { difficulty } : {} }),
+  getCalculators: (documentId) => api.get(`/learning/${documentId}/interactions/calculators`),
+  getTimeline: (documentId) => api.get(`/learning/${documentId}/interactions/timeline`),
+  getGraphExplorers: (documentId) => api.get(`/learning/${documentId}/interactions/graph-explorers`),
+  getComparisons: (documentId) => api.get(`/learning/${documentId}/interactions/comparisons`),
+  getInteractionTypes: () => api.get('/learning/types'),
+  createCustomInteraction: (documentId, interactionType, config) =>
+    api.post(`/learning/${documentId}/interactions/custom`, null, { params: { interaction_type: interactionType, config } }),
+};
+
 // Health check
 export const healthCheck = () => api.get('/health');
 

@@ -5,6 +5,8 @@ import DocumentList from './pages/DocumentList';
 import DocumentViewer from './pages/DocumentViewer';
 import Search from './pages/Search';
 import Interactive from './pages/Interactive';
+import Advanced from './pages/Advanced';
+import Learning from './pages/Learning';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
           <Route path="/documents/:documentId" element={<DocumentViewer />} />
           <Route path="/search" element={<Search />} />
           <Route path="/interactive/:documentId" element={<Interactive />} />
+          <Route path="/advanced/:documentId" element={<Advanced />} />
+          <Route path="/learning/:documentId" element={<Learning />} />
         </Routes>
       </Layout>
     </Router>
