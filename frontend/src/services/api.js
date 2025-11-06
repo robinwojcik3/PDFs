@@ -52,6 +52,95 @@ export const interactiveAPI = {
   getStatistics: (documentId) => api.get(`/interactive/${documentId}/statistics`),
 };
 
+// Analyse avancée
+export const advancedAPI = {
+  getBibliography: (documentId) => api.get(`/advanced/${documentId}/bibliography`),
+  exportBibliography: (documentId, format = 'bibtex') =>
+    api.get(`/advanced/${documentId}/bibliography/export`, { params: { format } }),
+  getEquations: (documentId) => api.get(`/advanced/${documentId}/equations`),
+  getMethodology: (documentId) => api.get(`/advanced/${documentId}/methodology`),
+  compareDocuments: (documentIds) => api.post('/advanced/compare', documentIds),
+  getRecommendations: (documentId, limit = 5) =>
+    api.get(`/advanced/${documentId}/recommendations`, { params: { limit } }),
+  recommendByTopic: (keywords, limit = 5) =>
+    api.get('/advanced/recommendations/by-topic', { params: { keywords, limit } }),
+  getTrendingTopics: (limit = 10) =>
+    api.get('/advanced/recommendations/trending-topics', { params: { limit } }),
+  getAuthorNetwork: () => api.get('/advanced/network/authors'),
+  exportDocument: (documentId, format = 'markdown', includeAnnotations = true) =>
+    api.get(`/advanced/${documentId}/export`, { params: { format, include_annotations: includeAnnotations } }),
+  getGlobalStatistics: () => api.get('/advanced/statistics/global'),
+};
+
+// Organisation (tags, collections, favoris, historique)
+export const organizationAPI = {
+  // Tags
+  addTag: (documentId, tag, color = null) =>
+    api.post(`/organization/tags/${documentId}`, { tag, color }),
+  removeTag: (documentId, tag) =>
+    api.delete(`/organization/tags/${documentId}/${tag}`),
+  getTags: (documentId) => api.get(`/organization/tags/${documentId}`),
+  getAllTags: () => api.get('/organization/tags'),
+  searchByTags: (tags, matchAll = false) =>
+    api.get('/organization/tags/search', { params: { tags, match_all: matchAll } }),
+  suggestTags: (documentId) => api.get(`/organization/tags/suggestions/${documentId}`),
+
+  // Catégories
+  setCategory: (documentId, categoryType, categoryValue) =>
+    api.post(`/organization/categories/${documentId}`, { category_type: categoryType, category_value: categoryValue }),
+  getCategories: (documentId) => api.get(`/organization/categories/${documentId}`),
+  getPredefinedCategories: () => api.get('/organization/categories/predefined'),
+  searchByCategory: (categoryType, categoryValue) =>
+    api.get(`/organization/categories/search/${categoryType}/${categoryValue}`),
+
+  // Collections
+  createCollection: (name, description = '', color = '#3b82f6', icon = 'folder') =>
+    api.post('/organization/collections', { name, description, color, icon }),
+  getCollections: () => api.get('/organization/collections'),
+  getCollection: (collectionId) => api.get(`/organization/collections/${collectionId}`),
+  updateCollection: (collectionId, data) =>
+    api.put(`/organization/collections/${collectionId}`, data),
+  deleteCollection: (collectionId) =>
+    api.delete(`/organization/collections/${collectionId}`),
+  addToCollection: (collectionId, documentId) =>
+    api.post(`/organization/collections/${collectionId}/documents/${documentId}`),
+  removeFromCollection: (collectionId, documentId) =>
+    api.delete(`/organization/collections/${collectionId}/documents/${documentId}`),
+  getDocumentCollections: (documentId) =>
+    api.get(`/organization/collections/document/${documentId}`),
+
+  // Favoris
+  addFavorite: (documentId, priority = 3, notes = '') =>
+    api.post(`/organization/favorites/${documentId}`, { priority, notes }),
+  removeFavorite: (documentId) =>
+    api.delete(`/organization/favorites/${documentId}`),
+  updateFavorite: (documentId, priority = null, notes = null) =>
+    api.put(`/organization/favorites/${documentId}`, { priority, notes }),
+  getFavorites: (sortBy = 'priority') =>
+    api.get('/organization/favorites', { params: { sort_by: sortBy } }),
+  getFavorite: (documentId) => api.get(`/organization/favorites/${documentId}`),
+  isFavorite: (documentId) => api.get(`/organization/favorites/${documentId}/check`),
+
+  // Historique
+  recordReading: (documentId, page = null, durationSeconds = null) =>
+    api.post(`/organization/history/${documentId}`, { page, duration_seconds: durationSeconds }),
+  updateProgress: (documentId, currentPage, totalPages) =>
+    api.put(`/organization/history/${documentId}/progress`, null, { params: { current_page: currentPage, total_pages: totalPages } }),
+  getHistory: (documentId) => api.get(`/organization/history/${documentId}`),
+  getAllHistory: (sortBy = 'last_view', limit = null) =>
+    api.get('/organization/history', { params: { sort_by: sortBy, limit } }),
+  getRecentDocuments: (days = 7, limit = 10) =>
+    api.get('/organization/history/recent', { params: { days, limit } }),
+  getReadingStatistics: () => api.get('/organization/history/statistics'),
+  getReadingByPeriod: (period = 'week') =>
+    api.get('/organization/history/statistics/period', { params: { period } }),
+  clearHistory: (documentId = null) =>
+    documentId ? api.delete(`/organization/history/${documentId}`) : api.delete('/organization/history'),
+
+  // Statistiques
+  getStatistics: () => api.get('/organization/statistics'),
+};
+
 // Health check
 export const healthCheck = () => api.get('/health');
 
