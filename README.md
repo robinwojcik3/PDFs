@@ -87,7 +87,21 @@ PDF Explorer est une plateforme complète d'analyse scientifique qui combine ext
 - Visualisations statistiques (distribution, graphiques)
 - Timeline de recherche par année
 
-#### 10. **Export Multi-Formats**
+#### 10. **Applications Interactives Basées sur les Concepts** 🆕
+- **10 types d'applications pédagogiques** générées automatiquement à partir du contenu scientifique
+- **Visualisations de données interactives** : Explorer les résultats expérimentaux avec zoom, filtres, comparaisons
+- **Simulations scientifiques** : Manipuler les paramètres (croissance, distributions, processus dynamiques)
+- **Diagrammes de concepts** : Cartes mentales, flux méthodologiques, réseaux de relations
+- **Exercices pratiques** : 3 niveaux (beginner/intermediate/advanced) avec feedback immédiat
+- **Calculateurs scientifiques** : Taille d'échantillon, puissance, intervalles de confiance, taille d'effet
+- **Timelines de recherche** : Contextualisation historique des découvertes
+- **Explorateurs de graphiques** : Analyse approfondie des figures (mesures, annotations, extraction de données)
+- **Comparateurs** : Tableaux de données côte-à-côte avec calculs automatiques
+- Intégration avec l'analyse méthodologique pour adapter la complexité
+- **Conçu pour chercheurs experts** avec nuances scientifiques
+- Voir [GUIDE_APPLICATIONS_INTERACTIVES.md](GUIDE_APPLICATIONS_INTERACTIVES.md) pour plus de détails
+
+#### 11. **Export Multi-Formats**
 - **Markdown** : Format texte structuré avec sections
 - **LaTeX** : Document compilable pour publications
 - **JSON** : Export structuré complet avec métadonnées
@@ -97,7 +111,7 @@ PDF Explorer est une plateforme complète d'analyse scientifique qui combine ext
 
 ### 🔍 Recherche et Indexation
 
-#### 11. **Recherche Full-Text Avancée**
+#### 12. **Recherche Full-Text Avancée**
 - Indexation complète avec Whoosh
 - Recherche dans titres, textes, sections, abstracts
 - Snippets avec surlignage
@@ -105,7 +119,7 @@ PDF Explorer est une plateforme complète d'analyse scientifique qui combine ext
 - Filtres avancés
 - Scores de pertinence
 
-#### 12. **Visualisation et Navigation**
+#### 13. **Visualisation et Navigation**
 - Affichage des figures extraites
 - Tableaux interactifs
 - Navigation par sections
@@ -124,7 +138,8 @@ backend/app/
 │   ├── annotations.py        # Annotations
 │   ├── interactive.py        # Modules pédagogiques
 │   ├── advanced.py           # 🆕 Analyse avancée
-│   └── organization.py       # 🆕 Tags, collections, historique
+│   ├── organization.py       # 🆕 Tags, collections, historique
+│   └── learning.py           # 🆕 Applications interactives
 ├── services/
 │   ├── pdf_processor.py           # Extraction PDF
 │   ├── search_indexer.py          # Indexation Whoosh
@@ -137,7 +152,8 @@ backend/app/
 │   ├── exporter.py                # 🆕 Export multi-formats
 │   ├── tags_manager.py            # 🆕 Gestion tags
 │   ├── collections_manager.py     # 🆕 Collections/favoris
-│   └── reading_history.py         # 🆕 Historique lecture
+│   ├── reading_history.py         # 🆕 Historique lecture
+│   └── interactive_generator.py   # 🆕 Générateur d'applications interactives
 └── models/
     ├── document.py
     └── annotation.py
@@ -298,6 +314,10 @@ docker-compose up --build
 - Générer des fiches de synthèse
 - Visualiser les concepts clés
 - Annoter pour les étudiants
+- **Générer des applications interactives** pour illustrer les concepts complexes
+- Créer des simulations pour explorer les paramètres méthodologiques
+- Utiliser des calculateurs pour vérifier les analyses statistiques
+- Voir [GUIDE_APPLICATIONS_INTERACTIVES.md](GUIDE_APPLICATIONS_INTERACTIVES.md)
 
 ## 📊 API Documentation
 
@@ -322,6 +342,19 @@ L'API complète est documentée avec Swagger UI :
 - `POST /favorites/{document_id}` - Ajouter aux favoris
 - `POST /history/{document_id}` - Enregistrer lecture
 - `GET /history/statistics` - Statistiques de lecture
+
+#### Applications Interactives (`/api/learning`) 🆕
+- `GET /{document_id}/interactions` - Toutes les applications pour un document
+- `GET /{document_id}/interactions/visualizations` - Visualisations de données
+- `GET /{document_id}/interactions/simulations` - Simulations scientifiques
+- `GET /{document_id}/interactions/diagrams` - Diagrammes de concepts
+- `GET /{document_id}/interactions/exercises` - Exercices pratiques
+- `GET /{document_id}/interactions/calculators` - Calculateurs scientifiques
+- `GET /{document_id}/interactions/timeline` - Timeline de recherche
+- `GET /{document_id}/interactions/graph-explorers` - Explorateurs de graphiques
+- `GET /{document_id}/interactions/comparisons` - Comparateurs de données
+- `GET /types` - Types d'interactions disponibles
+- `POST /{document_id}/interactions/custom` - Créer interaction personnalisée
 
 ## 🛠️ Technologies
 
@@ -387,6 +420,7 @@ chmod 755 data/pdfs/
 
 - [Guide d'utilisation complet](GUIDE_UTILISATION.md)
 - [Liste des fonctionnalités v2.0](NOUVELLES_FONCTIONNALITES.md)
+- **[Guide des Applications Interactives](GUIDE_APPLICATIONS_INTERACTIVES.md)** 🆕
 - [API Documentation](http://localhost:8000/docs)
 
 ## 🎓 Citations
