@@ -197,7 +197,25 @@ data/
 - Node.js 16+
 - pip et npm
 
-### Méthode 1 : Scripts de démarrage
+### Méthode 1 : Script Python (Recommandé) ⭐
+
+**Le plus robuste avec fallbacks automatiques et gestion d'erreurs complète**
+
+```bash
+python3 start.py
+```
+
+**Fonctionnalités :**
+- ✅ Détection automatique des ports disponibles (fallback si occupés)
+- ✅ Vérification des prérequis (Python, Node.js, npm)
+- ✅ Configuration automatique (venv, dépendances)
+- ✅ Gestion d'erreurs robuste avec messages clairs
+- ✅ Multi-plateforme (Linux, macOS, Windows)
+- ✅ Arrêt propre avec Ctrl+C
+
+**Voir [DEMARRAGE_RAPIDE.md](DEMARRAGE_RAPIDE.md) pour le guide complet**
+
+### Méthode 2 : Scripts Shell
 
 **Linux/Mac :**
 ```bash
@@ -209,7 +227,7 @@ data/
 start.bat
 ```
 
-### Méthode 2 : Démarrage manuel
+### Méthode 3 : Démarrage manuel
 
 **Backend :**
 ```bash
@@ -227,10 +245,17 @@ npm install
 npm run dev
 ```
 
-### Méthode 3 : Docker Compose
+### Méthode 4 : Docker Compose
 ```bash
 docker-compose up --build
 ```
+
+## 🆘 Problèmes de Démarrage ?
+
+Si vous rencontrez des difficultés, consultez :
+- **[DEMARRAGE_RAPIDE.md](DEMARRAGE_RAPIDE.md)** - Guide détaillé avec résolution de problèmes
+- Section "Résolution de Problèmes" ci-dessous
+- Essayez `python3 start.py` qui gère automatiquement la plupart des problèmes
 
 ## 📖 Utilisation
 
@@ -418,9 +443,11 @@ chmod 755 data/pdfs/
 
 ## 📚 Documentation
 
+- **[Démarrage Rapide](DEMARRAGE_RAPIDE.md)** ⭐ - Guide de démarrage avec résolution de problèmes
 - [Guide d'utilisation complet](GUIDE_UTILISATION.md)
 - [Liste des fonctionnalités v2.0](NOUVELLES_FONCTIONNALITES.md)
 - **[Guide des Applications Interactives](GUIDE_APPLICATIONS_INTERACTIVES.md)** 🆕
+- [Système d'Applications Interactives](SYSTEME_APPLICATIONS_INTERACTIVES.md) - Résumé technique
 - [API Documentation](http://localhost:8000/docs)
 
 ## 🎓 Citations
