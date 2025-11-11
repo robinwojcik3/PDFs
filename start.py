@@ -114,8 +114,11 @@ def check_node_installed() -> bool:
 
 def check_npm_installed() -> bool:
     """Vérifie si npm est installé."""
+    # Sur Windows, utiliser npm.cmd
+    npm_cmd = 'npm.cmd' if platform.system() == 'Windows' else 'npm'
+
     try:
-        result = subprocess.run(['npm', '--version'],
+        result = subprocess.run([npm_cmd, '--version'],
                               capture_output=True,
                               text=True,
                               timeout=5)
