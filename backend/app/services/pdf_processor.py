@@ -8,7 +8,7 @@ import hashlib
 from typing import List, Dict, Tuple, Optional
 from datetime import datetime
 from PIL import Image
-import PyPDF2
+import pypdf
 import pdfplumber
 
 from app.models.document import Document, DocumentMetadata, Figure, Table, Section
@@ -57,7 +57,7 @@ class PDFProcessor:
 
         # Obtenir le nombre de pages et la taille du fichier
         with open(pdf_path, 'rb') as f:
-            pdf_reader = PyPDF2.PdfReader(f)
+            pdf_reader = pypdf.PdfReader(f)
             num_pages = len(pdf_reader.pages)
 
         file_size = os.path.getsize(pdf_path)
@@ -86,7 +86,7 @@ class PDFProcessor:
 
         try:
             with open(pdf_path, 'rb') as f:
-                pdf_reader = PyPDF2.PdfReader(f)
+                pdf_reader = pypdf.PdfReader(f)
                 pdf_metadata = pdf_reader.metadata
 
                 if pdf_metadata:
